@@ -1,0 +1,69 @@
+{# app/templates/suggestions_table.html #}
+<table class="min-w-full divide-y divide-zinc-700">
+    <thead class="bg-zinc-700">
+        <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Category</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Content</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Submitter</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+            {% if role == 'admin_full' %}
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody class="bg-zinc-800 divide-y divide-zinc-700">
+        {% for suggestion in suggestions %}
+        <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                {{ suggestion.timestamp.strftime('%Y-%m-%d %H:%M') }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                {{ suggestion.category }}
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-300 break-words min-w-[200px]">
+                {{ suggestion.content }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                {% if suggestion.is_anonymous %}
+                Anonymous
+                {% else %}
+                {{ suggestion.submitter_personnel_number }}
+                {% endif %}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                {# Check if user role allows editing status #}
+                {% if role in ['admin_full', 'admin_view_only'] %}
+                {# Use the partial template to render the select #}
+                {# Pass the necessary variables using 'with context' #}
+                {% include '_suggestion_select.html' with context %}
+                {% else %}
+                {# Read-only view for other roles #}
+                <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        {% if suggestion.status == 'New' %}bg-blue-800 text-blue-100{% elif suggestion.status == 'In Progress' %}bg-yellow-800 text-yellow-100{% elif suggestion.status == 'Resolved' %}bg-green-800 text-green-100{% elif suggestion.status == 'Rejected' %}bg-red-800 text-red-100{% endif %}">
+                    {{ suggestion.status }}
+                </span>
+                {% endif %}
+            </td>
+            {% if role == 'admin_full' %} {# Delete action still restricted to admin_full #}
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button hx-post="{{ url_for('main.delete_suggestion', suggestion_id=suggestion.id) }}"
+                    hx-target="closest tr" hx-swap="outerHTML swap:0.5s"
+                    hx-confirm="Are you sure you want to delete this suggestion?"
+                    class="text-red-500 hover:text-red-700 transition duration-150 ease-in-out">
+                    Delete
+                </button>
+            </td>
+            {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="{% if role == 'admin_full' %}6{% else %}5{% endif %}"
+                class="px-6 py-4 text-center text-sm text-gray-500">
+                No suggestions found matching the criteria.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

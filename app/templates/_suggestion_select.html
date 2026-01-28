@@ -1,0 +1,27 @@
+{# app/templates/_suggestion_select.html #}
+{# Renders the status select dropdown. Expects 'suggestion' and 'role'. #}
+
+{% if role in ['admin_full', 'admin_view_only'] %}
+<select {# *** ADD UNIQUE ID *** #} id="status-select-{{ suggestion.id }}" class="block w-full text-sm border-zinc-600 text-gray-200 rounded-md shadow-sm focus:ring-green-700 focus:border-green-700
+           {% if suggestion.status == 'New' %} bg-blue-600/80 hover:bg-blue-500/80
+           {% elif suggestion.status == 'In Progress' %} bg-yellow-600/80 hover:bg-yellow-500/80
+           {% elif suggestion.status == 'Resolved' %} bg-green-600/80 hover:bg-green-500/80
+           {% elif suggestion.status == 'Rejected' %} bg-red-600/80 hover:bg-red-500/80
+           {% else %} bg-zinc-700 hover:bg-zinc-600 {% endif %}
+           transition duration-150 ease-in-out" {# *** KEEP NAME ATTRIBUTE *** #} name="status" {# HTMX attributes #}
+    hx-put="{{ url_for('main.update_suggestion_status', id=suggestion.id) }}" hx-trigger="change" hx-target="this"
+    hx-swap="outerHTML" {# *** ADD HX-INCLUDE pointing to its own ID *** #}
+    hx-include="#status-select-{{ suggestion.id }}">
+    <option value="New" {% if suggestion.status=='New' %}selected{% endif %}>New</option>
+    <option value="In Progress" {% if suggestion.status=='In Progress' %}selected{% endif %}>In Progress</option>
+    <option value="Resolved" {% if suggestion.status=='Resolved' %}selected{% endif %}>Resolved</option>
+    <option value="Rejected" {% if suggestion.status=='Rejected' %}selected{% endif %}>Rejected</option>
+</select>
+{% else %}
+{# Read-only view #}
+<span
+    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+        {% if suggestion.status == 'New' %}bg-blue-800 text-blue-100{% elif suggestion.status == 'In Progress' %}bg-yellow-800 text-yellow-100{% elif suggestion.status == 'Resolved' %}bg-green-800 text-green-100{% elif suggestion.status == 'Rejected' %}bg-red-800 text-red-100{% endif %}">
+    {{ suggestion.status }}
+</span>
+{% endif %}
