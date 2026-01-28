@@ -1,33 +1,19 @@
 # Hosting Suggestion Box App on PythonAnywhere
 
-This guide providing step-by-step instructions to host your Flask application on [PythonAnywhere](https://www.pythonanywhere.com/).
+   git clone https://github.com/KCOFODILE/suggestion_box
+   cd suggestion_box
+   
 
-## 1. Prepare Your Code
-Before uploading, ensure your local directory is clean. PythonAnywhere works best if you use Git, but you can also upload files directly.
-
-### Recommended: Using Git (GitHub/Bitbucket)
-1. Push your code to a private repository on GitHub.
-2. In the PythonAnywhere **Dashboard**, open a **Bash Console**.
-3. Clone your repository:
+1. Install `uv` on PythonAnywhere:
    ```bash
-   git clone https://github.com/your-username/suggestion-box-app.git
-   cd suggestion-box-app
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   source $HOME/.cargo/env
    ```
 
----
-
-## 2. Set Up a Virtual Environment
-In the PythonAnywhere Bash Console (within your project folder):
-
-1. Create a virtual environment:
+2. Create a virtual environment and install dependencies:
    ```bash
-   mkvirtualenv --python=/usr/bin/python3.10 my-venv
-   ```
-   *(Note: You can replace `3.10` with your preferred version, e.g., `3.9` or `3.11`)*
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
+   cd ~/suggestion_box
+   uv sync
    ```
 
 ---
@@ -35,12 +21,12 @@ In the PythonAnywhere Bash Console (within your project folder):
 ## 3. Configure the Web App
 1. Go to the **Web** tab in the PythonAnywhere dashboard.
 2. Click **Add a new web app**.
-3. Select **Manual Configuration** (Do NOT select Flask directly, as we use a custom structure).
-4. Choose the Python version that matches your virtual environment (e.g., Python 3.10).
+3. Select **Manual Configuration**.
+4. Choose **Python 3.11**.
 5. Once created:
-   - **Source code:** Set to `/home/yourusername/suggestion-box-app`
-   - **Working directory:** Set to `/home/yourusername/suggestion-box-app`
-   - **Virtualenv:** Set to `/home/yourusername/.virtualenvs/my-venv`
+   - **Source code:** Set to `/home/Hicneud/suggestion_box`
+   - **Working directory:** Set to `/home/Hicneud/suggestion_box`
+   - **Virtualenv:** Set to `/home/Hicneud/suggestion_box/.venv`
 
 ---
 
@@ -55,7 +41,7 @@ import sys
 import os
 
 # Add your project directory to the sys.path
-path = '/home/yourusername/suggestion-box-app'
+path = '/home/Hicneud/suggestion_box'
 if path not in sys.path:
     sys.path.append(path)
 
@@ -73,11 +59,11 @@ If you haven't uploaded your `suggestion_box.db` or want to start fresh:
 1. In the Bash Console:
    ```bash
    export FLASK_APP=run.py
-   flask init-db
+   uv run flask init-db
    ```
 2. (Optional) Create your first user:
    ```bash
-   flask create-viewer yourusername yourpassword
+   uv run flask create-viewer yourusername yourpassword
    ```
 
 ---
@@ -87,14 +73,14 @@ If your app has a `static` folder for CSS/JS:
 1. In the **Web** tab, scroll down to **Static Files**.
 2. Add a new entry:
    - **URL:** `/static/`
-   - **Path:** `/home/yourusername/suggestion-box-app/app/static`
+   - **Path:** `/home/Hicneud/suggestion_box/app/static`
 
 ---
 
 ## 7. Reload and Visit
 1. Go back to the top of the **Web** tab.
 2. Click the green **Reload** button.
-3. Your app should now be live at `yourusername.pythonanywhere.com`!
+3. Your app should now be live at `hicneud.pythonanywhere.com`!
 
 > [!TIP]
 > **Debugging:** If you see a "500 Internal Server Error", check the **Error Log** link at the bottom of the Web tab. It usually points directly to the missing dependency or configuration error.

@@ -16,38 +16,25 @@ This is a web application for submitting and viewing suggestions and complaints 
 1.  **Clone the repository:**
     ```bash
     git clone <repository_url>
-    cd suggestion-box-app
+    cd suggestion-box
     ```
-2.  **Create a virtual environment:**
+2.  **Install dependencies and create virtual environment:**
     ```bash
-    python -m venv envbot
+    uv sync
     ```
-3.  **Activate the virtual environment:**
-    - On Windows:
-      ```bash
-      .\envbot\Scripts\activate
-      ```
-    - On macOS/Linux:
-      ```bash
-      source envbot/bin/activate
-      ```
-4.  **Install dependencies:**
+3.  **Set up the database:**
     ```bash
-    pip install -r requirements.txt
+    uv run flask db upgrade
     ```
-5.  **Set up the database:**
+4.  **Create a user:**
     ```bash
-    flask db upgrade
-    ```
-6.  **Create a user:**
-    ```bash
-    python create_user.py
+    uv run python create_user.py
     ```
     Follow the prompts to create a user with the desired role (admin_full, admin_view_only, or viewer).
 
-7.  **Run the application:**
+5.  **Run the application:**
     ```bash
-    flask run
+    uv run flask run
     ```
 
 The application will be available at `http://127.0.0.1:5000/`.
